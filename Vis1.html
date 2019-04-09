@@ -1,0 +1,108 @@
+<html>
+   <head>
+      <title> YOUR NAME - Assignment</title>
+	   <script src="https://cdn.jsdelivr.net/npm/vega@4.4.0"></script>
+	   <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc12"></script>
+	   <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1"></script>
+      <style>
+         body {
+         font-family: sans-serif;
+         }
+         .vega-actions a {
+         padding: 0.2em;
+         }
+      </style>
+   </head>
+   <body>
+      <table style="width: 850px; margin-left: auto; margin-right: auto;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Name:&nbsp;</strong></td>
+               <td style="vertical-align: top;">Eoghan Cunningham</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Student Number:</strong></td>
+               <td style="vertical-align: top;">1644116</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Dataset description:</strong></td>
+               <td style="vertical-align: top;"> This dataset contains information on KickStarter projects. The dataset provides the name, category and country in which each project was based. In addition to this the goal, state, number of backers and the amount of money pledged to each project is provided. In order to share the dataset on github I had to reduce its size. of the 300,000 entries I took a random sample of 200,000.
+               </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Initial questions</strong></td>
+               <td style="vertical-align: top;">How well do people value their projects? How accurately are they setting their goals?</td>
+            </tr>
+         </tbody>
+      </table>
+      <hr />
+      <div id="vis" align="center"></div>
+      <hr />
+      <table style="width: 850px; margin-left: auto; margin-right: auto;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Description:&nbsp;</strong></td>
+               <td style="vertical-align: top;">The scatter plot plots the goals of projects across the x-axis and the actual amount pledged to the projects across the y-axis. This leaves all successful projects above the main diagonal and all failed projects below this. To emphasise this division, I have coloured the successful projects orange and the failed projects blue. </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Insight:</strong></td>
+               <td style="vertical-align: top;">The main diagonal across the middle of the visualisation gives some insight into the nature of the failed projects. There are many successful projects correlated immediately above this diagonal while few of the failed projects lie immediately below it. This tells us that few projects fail very close to their goals. This is reminiscent of runners in a marathon.
+               The traffic in the upper left corner of the visualisation shows the number of projects massively over-achieving their goals. This was certainly surprising. Similarly, the correlation of points along the x-axis show the allarming numer of projects with very large goals who recieved little to nothing.
+               Finally, it is interesting to note the vertical lines apparent in the visualisation as projects group around whole, round goals. It is interesting to follow along one of these lines and note the massive difference in the achievement of projects with the same goal.</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Design considerations</strong></td>
+               <td style="vertical-align: top;">I chose to use a scatter plot as it is the best way to plot two quantitative values against eachother. I initially did not feel that the colour encoding was neccessary, but after trying it I found it better illuminated the diagonal across the visualisation. It was only after adding the colour that I noticed the few projects that failed so close to their goals. I used orange and blue as a colourblind safe colour pairing. I binned the data in an attempt to reduce over-plotting and chose 100 bins as 75 was too few and the collections of projects with the same goal began to seem artificial.
+               </td>
+            </tr>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Data filtering and transformation:&nbsp;</strong></td>
+               <td style="vertical-align: top;">Only projects listed as failures or successes are shown; live or stalled projects were removed. Project goal and pledged values are kept below 900,000 to remove some outliers that were impeding the legibility of the visualisation.</td>
+            </tr>
+         </tbody>
+      </table>
+      <script type="text/javascript">
+          var yourVlSpec =  {
+              "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+              "data": {"url": "https://raw.githubusercontent.com/eoghancunn/kickstarterdata/master/ks-projects-shorter.csv"},
+              "transform":[
+                           {"filter": "datum.goal < 900000"},
+                           {"filter": "datum.pledged < 900000"},
+                           {"filter":{"field":"state", "oneOf":["successful","failed"]}}
+                           ],
+                           "mark": {
+                               "type": "point"
+                           },
+                           "encoding": {
+                               "x": {
+                                   "field": "goal",
+                                   "type": "quantitative",
+                                   "bin": {"maxbins": 100},
+                                   "title": "Goal"
+                               },
+                               "y": {
+                                   "field": "pledged",
+                                   "type": "quantitative",
+                                   "bin": {"maxbins": 100},
+                                   "title": "Pledged"
+                               },
+                               "color":{
+                                   "type":"nominal",
+                                   "field":"state",
+                                   "legend": {
+                                       "type":"symbol",
+                                       "values":["failed","successful"]
+                                   }
+                               }
+                           },
+                           "height": 400,
+                           "width": 500,
+                           "title": {
+                               "text":"Goals of KickStarter Projects"
+                           }
+          }
+
+            vegaEmbed("#vis", yourVlSpec);
+      </script>
+   </body>
+</html>

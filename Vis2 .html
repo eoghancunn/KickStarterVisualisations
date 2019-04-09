@@ -1,0 +1,100 @@
+<html>
+   <head>
+      <title> YOUR NAME - Assignment</title>
+	   <script src="https://cdn.jsdelivr.net/npm/vega@4.4.0"></script>
+	   <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc12"></script>
+	   <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1"></script>
+      <style>
+         body {
+         font-family: sans-serif;
+         }
+         .vega-actions a {
+         padding: 0.2em;
+         }
+      </style>
+   </head>
+   <body>
+      <table style="width: 850px; margin-left: auto; margin-right: auto;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Name:&nbsp;</strong></td>
+               <td style="vertical-align: top;">Eoghan</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Student Number:</strong></td>
+               <td style="vertical-align: top;">1644116</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Dataset description:</strong></td>
+               <td style="vertical-align: top;"> This dataset contains information on KickStarter projects. The dataset provides the name, category and country in which each project was based. In addition to this the goal, state, number of backers and the amount of money pledged to each project is provided.'
+               </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Initial questions</strong></td>
+               <td style="vertical-align: top;">What amount of money is typically pledged to a project? Does this is differ across categories? Is the average amount pledged higher in different countries.</td>
+            </tr>
+         </tbody>
+      </table>
+      <hr />
+      <div id="vis" align="center"></div>
+      <hr />
+      <table style="width: 850px; margin-left: auto; margin-right: auto;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Description:&nbsp;</strong></td>
+               <td style="vertical-align: top;">This chart shows the average amount pledged to projects. The projects have been grouped into the major categories and the countries where they are based. The size of the circle mark in each section indicates the size of the average amount pledged to projects in that section. </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Insight:</strong></td>
+               <td style="vertical-align: top;">Firstly, we can see that projects in scandanavian countries receive the largest pledges on average. Across all countries it can be seen that fashion, design and tech projects typically receive larger pledges per backer. Looking in the centre of the table, we can see that projects based in the US and Canada recieve smaller pledges regardless of their categories. The same appears to be true for most European Countries, with the exception of Switzerland where the average pledge to Theater, Fashion, and Crafts are disproportionately large.
+               It seems art and culture are alive and well in Switzerland and that Sweden, Denmark or Norway may be the best place to set up your KickStarter.</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Design considerations</strong></td>
+               <td style="vertical-align: top;">I have chosen the punch-card format as I wanted to use both the x and y axes for categorical data. Attempting to encode either country or category with colour would have drastically reduced the readability of the visualistion. Having experimented with using a monochrome colour scale to encode the size of the donations, I instead setlled on using the size of the marks as it would survive any variation in printing or monitors.
+                   The circles are blue but as there is no other colour in the visualisation this is arbitrary and would work similarly in black and white.
+               </td>
+            </tr>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Data filtering and transformation:&nbsp;</strong></td>
+               <td style="vertical-align: top;">Only project where the country is specified are shown.  </td>
+            </tr>
+         </tbody>
+      </table>
+      <script type="text/javascript">
+          var yourVlSpec =  {
+              "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+              "data": { "url": "https://raw.githubusercontent.com/eoghancunn/kickstarterdata/master/ks-projects-shorter.csv"},
+              
+              "transform":[
+                           {"calculate": "datum.pledged / (datum.backers)", "as": "AVG"},
+                           {"filter": {"field": "country", "oneOf": ["AT","AU","BE","CA","CH","DE","DK","ES","FR","GB","IE","LU","NL","NO","NZ","SE","US"]}}
+                           ],
+                           "mark": "circle",
+                           "encoding": {
+                               "y": {
+                                   "field": "main_category",
+                                   "type": "nominal",
+                                   "title":"Category"
+                               },
+                               "x": {
+                                   "field": "country",
+                                   "type": "nominal",
+                                   "title":"Country"
+                               },
+                               "size": {
+                                   "field": "AVG",
+                                   "type": "quantitative",
+                                   "aggregate": "mean",
+                                   "legend": {
+                                       "title": "Amount of average pledge"
+                                   }
+                               }
+                           },
+                           "height": 400,
+                           "width": 300
+          }
+            vegaEmbed("#vis", yourVlSpec);
+      </script>
+   </body>
+</html>

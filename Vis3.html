@@ -1,0 +1,203 @@
+<html>
+   <head>
+      <title> YOUR NAME - Assignment</title>
+	   <script src="https://cdn.jsdelivr.net/npm/vega@4.4.0"></script>
+	   <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc12"></script>
+	   <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.29.1"></script>
+      <style>
+         body {
+         font-family: sans-serif;
+         }
+         .vega-actions a {
+         padding: 0.2em;
+         }
+      </style>
+   </head>
+   <body>
+      <table style="width: 850px; margin-left: auto; margin-right: auto;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Name:&nbsp;</strong></td>
+               <td style="vertical-align: top;">Eoghan Cunningham</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Student Number:</strong></td>
+               <td style="vertical-align: top;">1644116</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Dataset description:</strong></td>
+               <td style="vertical-align: top;"> This dataset contains information on KickStarter projects. The dataset provides the name, category and country in which each project was based. In addition to this the goal, state, number of backers and the amount of money pledged to each project is provided. In order to share the dataset on github I had to reduce its size. of the 300,000 entries I took a random sample of 200,000.
+               </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Initial questions</strong></td>
+               <td style="vertical-align: top;">What is a better recipe for success: lots of small pledges, or few large pledges? Does this differ accross the categories.</td>
+            </tr>
+         </tbody>
+      </table>
+      <hr />
+      <div id="vis" align="center"></div>
+      <hr />
+      <table style="width: 850px; margin-left: auto; margin-right: auto;" cellspacing="5" cellpadding="5">
+         <tbody>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Description:&nbsp;</strong></td>
+               <td style="vertical-align: top;">The scatter plots plot the amount of money pledged to a project on the y-axis and the number of people backing the project on the x-axis. Blue points are successful projects and orange points are failed projects. Each plot represents a different category.</td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Insight:</strong></td>
+               <td style="vertical-align: top;">Initially I expected to find more instances of projects being backed by many people making small donations. I anticipated this being the recipe for success on KickStarter. I was wrong. It seems that Games is the only category where such projects even exist; perhaps these are apps.
+               Somewhat notable are the failed projects in Design and Technology. Here we can see many failed projects along the left hand edge of the plot. These represent projects that were backed heavily by relatively few supporters.
+               Most notable is possibly the correlation along the diagonal in the Comics plot. Something about this category leads to many donations of equal size. Perhaps this is the price of a comic book or a subscription to a comic book. </td>
+            </tr>
+            <tr>
+               <td style="vertical-align: top;"><strong>Design considerations</strong></td>
+               <td style="vertical-align: top;">I chose to use a scatter plot as it is the best way to plot two quantitative values against eachother. I decided small multiples would be the best way of encoding the categories. This worked very well as it served to reduce the over-plotting and encoding the categories by colour would have been too crowded and hard to follow. This allowed me to encode the success of the projects using colour; again using blue and orange as they are colourblind safe.
+               </td>
+            </tr>
+            <tr>
+               <td style="width: 200px; vertical-align: top;"><strong>Data filtering and transformation:&nbsp;</strong></td>
+               <td style="vertical-align: top;">Only projects listed as failures or successes are shown; live or stalled projects were removed. Projects with less than 200000 usd pledged and fewer than 5000 backers are shown to remove outliers, improve ledgibility and maintain common scales across all axes. </td>
+            </tr>
+         </tbody>
+      </table>
+      <script type="text/javascript">
+          var yourVlSpec =  {
+              "$schema": "https://vega.github.io/schema/vega-lite/v3.json",
+              "data": {
+                  "url": "https://raw.githubusercontent.com/eoghancunn/kickstarterdata/master/ks-projects-shorter.csv",
+                  "format": {
+                      "type": "csv"
+                  }
+              },
+              "hconcat":[
+                         {
+                         "transform": [
+                                       {"filter": "datum.pledged > 0"},
+                                       {"filter": "datum.pledged < 200000"},
+                                       {"filter": "datum.backers < 5000"},
+                                       {"filter": {"field": "state", "oneOf": ["successful","failed"]}},
+                                       {"filter": {"field": "main_category", "oneOf": ["Games","Design","Film & Video"]}}
+                                       ],
+                         "mark": "circle",
+                         "encoding": {
+                         "y": {
+                         "field": "pledged",
+                         "type": "quantitative",
+                         "bin": {"maxbins":800},
+                         "scale": {"zero":false},
+                         "axis": {"title": "Pledged"}
+                         },
+                         "x": {
+                         "field": "backers",
+                         "type": "quantitative",
+                         "bin": {"maxbins":800},
+                         "scale": {"zero":false},
+                         "axis": {"title": "Number of Backers"}
+                         },
+                         "color":{
+                         "condition":{
+                         "test":"datum.state == 'successful' ||datum.state == 'live'", "value": "#ADD8E6"},
+                         "value" : "orange"
+                         },
+                         "row":{
+                         "field":"main_category",
+                         "type":"nominal",
+                         "title":"Category"
+                         }
+                         },
+                         "width":100,
+                         "height":100
+                         },
+                         {
+                         "transform": [
+                                       {"filter": "datum.pledged > 0"},
+                                       {"filter": "datum.pledged < 200000"},
+                                       {"filter": "datum.backers < 5000"},
+                                       {"filter": {"field": "state", "oneOf": ["successful","failed"]}},
+                                       {"filter": {"field": "main_category", "oneOf": ["Technology","Music","Food"]}}
+                                       ],
+                         "mark": "circle",
+                         "encoding": {
+                         "y": {
+                         "field": "pledged",
+                         "type": "quantitative",
+                         "bin": {"maxbins":800},
+                         "scale": {"zero":false},
+                         "axis": {"title": ""}
+                         },
+                         "x": {
+                         "field": "backers",
+                         "type": "quantitative",
+                         "bin": {"maxbins":800},
+                         "scale": {"zero":false},
+                         "axis": {"title": "Number of Backers"}
+                         },
+                         "color":{
+                         "condition":{
+                         "test":"datum.state == 'successful' ||datum.state == 'live'", "value": "#ADD8E6"},
+                         "value" : "orange"
+                         },
+                         "row":{
+                         "field":"main_category",
+                         "type":"nominal",
+                         "title":""
+                         }
+                         },
+                         "width":100,
+                         "height":100
+                         },{
+                         "transform": [
+                                       {"filter": "datum.pledged > 0"},
+                                       {"filter": "datum.pledged < 200000"},
+                                       {"filter": "datum.backers < 5000"},
+                                       {"filter": {"field": "state", "oneOf": ["successful","failed"]}},
+                                       {"filter": {"field": "main_category", "oneOf": ["Art","Comics","Fashion"]}}
+                                       ],
+                         "mark": "circle", 
+                         "encoding": {
+                         "y": {
+                         "field": "pledged", 
+                         "type": "quantitative",
+                         "bin": {"maxbins":800},
+                         "scale": {"zero":false},
+                         "axis": {"title": ""}
+                         },
+                         "x": {
+                         "field": "backers",
+                         "type": "quantitative",
+                         "bin": {"maxbins":800},
+                         "scale": {"zero":false},
+                         "axis": {"title": "Number of Backers"}
+                         },
+                         "color":{
+                         "condition":{
+                         "test":"datum.state == 'successful' ||datum.state == 'live'", "value": "#ADD8E6"},
+                         "value" : "orange"
+                         },
+                         "row":{
+                         "field":"main_category",
+                         "type":"nominal",
+                         "title":""
+                         }
+                         },
+                         "width":100,
+                         "height":100
+                         }
+                         ],
+                         
+                         "title": {
+                             "text": "Support for KickStarter Campaigns",
+                             "anchor": "end"
+                         },
+                         "config": {
+                             "legend":{
+                                 "orient":"bottom-right"
+                             }
+                         }
+          }
+
+            vegaEmbed("#vis", yourVlSpec);
+      </script>
+   </body>
+</html>
